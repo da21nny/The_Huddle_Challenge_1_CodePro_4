@@ -42,10 +42,6 @@ function generar_obstaculos(fila, columna){
     }
 }
 
-function dentro_de_rango(valor_x, valor_y){
-    return (valor_x >= 0 && valor_x < fila && valor_y >= 0 && valor_y >= 0 && valor_y < columna);
-}
-
 function mostrar_tablero(fila, columna){
     const contenedorID = document.getElementById('mapaVisual');
 
