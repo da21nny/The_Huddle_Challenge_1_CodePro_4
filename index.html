@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="main.js"></script>
+    <title>Calculadora de Rutas</title>
+</head>
+<body>
+    <header class="center"><h1>Calculadora de Rutas</h1></header>
+    <div class="center texto">
+        <label for="fila">Ingrese Fila: </label>
+        <input type="number" id="fila" name="fila" value="10">
+        <label for="columna">Ingrese Columna: </label>
+        <input type="number" id="columna" name="columna" value="10">
+        <br>
+        <button class="button, texto" id="btnGenerar">Generar</button>
+        <br>
+        <label for="inicial_x">Posición Inicial X: </label>
+        <input type="number" id="inicial_x" name="inicial_x">
+        <label for="inicial_y">Posición Inicial Y: </label>
+        <input type="number" id="inicial_y" name="inicial_y">
+        <br>
+        <label for="fin_x">Posición Fin X: </label>
+        <input type="number" id="fin_x" name="fin_x">
+        <label for="fin_y">Posición Fin Y: </label>
+        <input type="number" id="fin_y" name="fin_y">
+        <br>
+        <button class="button texto" id="btnEnviar">Enviar</button>
+    </div>
+    <br>
+    <div class="matriz-container" id="mapaVisual"></div>
+    <br>
+    <div class="center">
+        <p class="center texto">Distancia del Camino : <strong id="distancia">0 pasos</strong></p>
+    </div>
+</body>
+</html>
