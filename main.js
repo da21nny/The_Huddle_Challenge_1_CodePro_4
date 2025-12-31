@@ -51,6 +51,11 @@ function generar_obstaculos(fila, columna) {
 }
 
 function coordenadas_inicio_fin() {
+    if (tablero.length === 0) {
+        alert('Por favor, genere un tablero antes de ingresar las coordenadas.');
+        return;
+    }
+
     const fila = tablero.length;
     const columna = tablero[0].length;
 
@@ -59,6 +64,11 @@ function coordenadas_inicio_fin() {
     const fin_x = parseInt(document.getElementById('fin_x').value) - 1;
     const fin_y = parseInt(document.getElementById('fin_y').value) - 1;
 
+    if (isNaN(inicio_x) || isNaN(inicio_y) || isNaN(fin_x) || isNaN(fin_y)) {
+        alert('Por favor, ingrese coordenadas validas.');
+        return 1;
+    }
+
     if (inicio_x < 0 || inicio_x >= fila || inicio_y < 0 || inicio_y >= columna) {
         alert('Coordenadas de inicio invalidas');
         return 1;
@@ -66,6 +76,14 @@ function coordenadas_inicio_fin() {
 
     if (fin_x < 0 || fin_x >= fila || fin_y < 0 || fin_y >= columna) {
         alert('Coordenadas de fin invalidas');
+        return 1;
+    }
+
+    if (tablero[inicio_y][inicio_x] === TERRENO.INICIO || tablero[fin_y][fin_x] === TERRENO.FIN ||
+        tablero[inicio_y][inicio_x] === TERRENO.BLOQUEO || tablero[fin_y][fin_x] === TERRENO.BLOQUEO ||
+        tablero[inicio_y][inicio_x] === TERRENO.AGUA || tablero[fin_y][fin_x] === TERRENO.AGUA ||
+        tablero[inicio_y][inicio_x] === TERRENO.EDIFICIO || tablero[fin_y][fin_x] === TERRENO.EDIFICIO) {
+        alert('Coordenadas de inicio o fin sobre terreno no valido');
         return 1;
     }
 
