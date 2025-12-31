@@ -19,7 +19,7 @@ function main() {
     btnEnviar.addEventListener('click', coordenadas_inicio_fin);
 }
 
-function crear_tablero(fila, columna) {
+function crear_tablero() {
     const numFila = parseInt(document.getElementById('fila').value);
     const numColumna = parseInt(document.getElementById('columna').value);
 
