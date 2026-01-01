@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,11 @@
     <script type="module" src="main.js"></script>
     <title>Calculadora de Rutas</title>
 </head>
+
 <body>
-    <header class="center"><h1>Calculadora de Rutas</h1></header>
+    <header class="center">
+        <h1>Calculadora de Rutas</h1>
+    </header>
     <div class="center texto">
         <label for="fila">Ingrese Fila: </label>
         <input type="number" id="fila" name="fila" value="10">
@@ -27,7 +31,7 @@
         <label for="fin_y">Posición Fin Y: </label>
         <input type="number" id="fin_y" name="fin_y">
         <br>
-        <button class="button texto" id="btnEnviar">Enviar</button>
+        <button class="button texto" id="btnEnviar">Calcular Camino</button>
     </div>
     <br>
     <div class="matriz-container" id="mapaVisual"></div>
@@ -36,4 +40,5 @@
         <p class="center texto">Distancia del Camino : <strong id="distancia">0 pasos</strong></p>
     </div>
 </body>
+
 </html>

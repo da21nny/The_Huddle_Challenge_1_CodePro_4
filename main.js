@@ -5,7 +5,8 @@ const TERRENO = {
     BLOQUEO: 3,
     CAMINO: 5,
     INICIO: 6,
-    FIN: 7
+    FIN: 7,
+    CAMINO_AGUA: 8
 }
 
 let tablero = [];
@@ -36,7 +37,28 @@ function crear_tablero() {
         }
         tablero.push(fila_actual);
     }
+
+    const inicio_x = parseInt(document.getElementById('inicial_x').value) - 1;
+    const inicio_y = parseInt(document.getElementById('inicial_y').value) - 1;
+    const fin_x = parseInt(document.getElementById('fin_x').value) - 1;
+    const fin_y = parseInt(document.getElementById('fin_y').value) - 1;
+
+    if (!isNaN(inicio_x) && !isNaN(inicio_y) && inicio_x >= 0 && inicio_x < numColumna && inicio_y >= 0 && inicio_y < numFila) {
+        tablero[inicio_y][inicio_x] = TERRENO.INICIO;
+    }
+
+    if (!isNaN(fin_x) && !isNaN(fin_y) && fin_x >= 0 && fin_x < numColumna && fin_y >= 0 && fin_y < numFila) {
+        tablero[fin_y][fin_x] = TERRENO.FIN;
+    }
     generar_obstaculos(numFila, numColumna);
+    document.getElementById('distancia').innerText = "0 pasos";
+    const pasos = buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y);
+
+    if (!pasos) {
+        document.getElementById('distancia').innerText = "No existe camino disponible.";
+    } else {
+        document.getElementById('distancia').innerText = pasos + " pasos";
+    }
     mostrar_tablero(numFila, numColumna);
 }
 
@@ -86,7 +108,9 @@ function coordenadas_inicio_fin() {
 
     for (let y = 0; y < fila; y++) {
         for (let x = 0; x < columna; x++) {
-            if (tablero[y][x] === TERRENO.INICIO ||
+            if (tablero[y][x] === TERRENO.CAMINO_AGUA) {
+                tablero[y][x] = TERRENO.AGUA;
+            } else if (tablero[y][x] === TERRENO.INICIO ||
                 tablero[y][x] === TERRENO.FIN ||
                 tablero[y][x] === TERRENO.CAMINO) {
                 tablero[y][x] = TERRENO.LIBRE;
@@ -105,7 +129,14 @@ function coordenadas_inicio_fin() {
     tablero[inicio_y][inicio_x] = TERRENO.INICIO;
     tablero[fin_y][fin_x] = TERRENO.FIN;
 
-    buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y);
+    document.getElementById('distancia').innerText = "0 pasos";
+    const pasos = buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y);
+
+    if (!pasos) {
+        document.getElementById('distancia').innerText = "No existe camino disponible.";
+    } else {
+        document.getElementById('distancia').innerText = pasos + " pasos";
+    }
 
     mostrar_tablero(fila, columna);
 }
@@ -141,8 +172,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) {
         let actual = lista_abierta[indice_actual];
 
         if (actual.x === fin_x && actual.y === fin_y) {
-            reconstruir_camino_final(actual);
-            return;
+            return reconstruir_camino_final(actual);
         }
 
         lista_abierta.splice(indice_actual, 1);
@@ -154,7 +184,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) {
             let nuevo_x = actual.x + movimientos[m][0];
             let nuevo_y = actual.y + movimientos[m][1];
 
-            if (nuevo_x >= 0 && nuevo_x < tablero[0].length & nuevo_y >= 0 && nuevo_y < tablero.length) {
+            if (nuevo_x >= 0 && nuevo_x < tablero[0].length && nuevo_y >= 0 && nuevo_y < tablero.length) {
                 let tipo_terreno = tablero[nuevo_y][nuevo_x];
 
                 if (tipo_terreno === TERRENO.EDIFICIO || tipo_terreno === TERRENO.BLOQUEO) continue;
@@ -197,12 +227,17 @@ function reconstruir_camino_final(nodo_final) {
     while (temporal.padre !== null) {
         if (tablero[temporal.y][temporal.x] !== TERRENO.FIN &&
             tablero[temporal.y][temporal.x] !== TERRENO.INICIO) {
-            tablero[temporal.y][temporal.x] = TERRENO.CAMINO;
+
+            if (tablero[temporal.y][temporal.x] === TERRENO.AGUA) {
+                tablero[temporal.y][temporal.x] = TERRENO.CAMINO_AGUA;
+            } else {
+                tablero[temporal.y][temporal.x] = TERRENO.CAMINO;
+            }
         }
         temporal = temporal.padre;
         pasos++;
     }
-    document.getElementById('distancia').innerText = pasos + " pasos";
+    return pasos;
 }
 
 function mostrar_tablero(fila, columna) {
@@ -245,6 +280,10 @@ function mostrar_tablero(fila, columna) {
                     break;
                 case TERRENO.CAMINO:
                     celdaDiv.textContent = '*';
+                    celdaDiv.classList.add('camino');
+                    break;
+                case TERRENO.CAMINO_AGUA:
+                    celdaDiv.textContent = 'A';
                     celdaDiv.classList.add('camino');
                     break;
                 default: // Terreno libre
