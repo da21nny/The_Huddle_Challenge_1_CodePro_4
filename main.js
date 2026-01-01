@@ -41,7 +41,7 @@ function crear_tablero() {
 }
 
 function generar_obstaculos(fila, columna) {
-    const numObstaculos = Math.floor((fila * columna) * 0.3);
+    const numObstaculos = Math.floor((fila * columna) * 0.4);
     for (let i = 0; i < numObstaculos; i++) {
         const valor_fila = Math.floor(Math.random() * fila);
         const valor_columna = Math.floor(Math.random() * columna);
@@ -74,14 +74,24 @@ function coordenadas_inicio_fin() {
         return 1;
     }
 
-    if (inicio_x < 0 || inicio_x >= fila || inicio_y < 0 || inicio_y >= columna) {
+    if (inicio_x < 0 || inicio_x >= columna || inicio_y < 0 || inicio_y >= fila) {
         alert('Coordenadas de inicio invalidas');
         return 1;
     }
 
-    if (fin_x < 0 || fin_x >= fila || fin_y < 0 || fin_y >= columna) {
+    if (fin_x < 0 || fin_x >= columna || fin_y < 0 || fin_y >= fila) {
         alert('Coordenadas de fin invalidas');
         return 1;
+    }
+
+    for (let y = 0; y < fila; y++) {
+        for (let x = 0; x < columna; x++) {
+            if (tablero[y][x] === TERRENO.INICIO || 
+                tablero[y][x] === TERRENO.FIN || 
+                tablero[y][x] === TERRENO.CAMINO) {
+                tablero[y][x] = TERRENO.LIBRE;
+            }
+        }
     }
 
     if (tablero[inicio_y][inicio_x] === TERRENO.INICIO || tablero[fin_y][fin_x] === TERRENO.FIN ||
@@ -151,7 +161,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) {
 
                 if(lista_cerrada.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y)) continue;
 
-                let costo_paso = (tipo_terreno === TERRENO.AGUA) ? 3 : 1;
+                let costo_paso = (tipo_terreno === TERRENO.AGUA) ? 5 : 1;
                 let g_tentativo = actual.g + costo_paso;
 
                 let vecino = lista_abierta.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y);
