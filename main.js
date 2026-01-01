@@ -86,8 +86,8 @@ function coordenadas_inicio_fin() {
 
     for (let y = 0; y < fila; y++) {
         for (let x = 0; x < columna; x++) {
-            if (tablero[y][x] === TERRENO.INICIO || 
-                tablero[y][x] === TERRENO.FIN || 
+            if (tablero[y][x] === TERRENO.INICIO ||
+                tablero[y][x] === TERRENO.FIN ||
                 tablero[y][x] === TERRENO.CAMINO) {
                 tablero[y][x] = TERRENO.LIBRE;
             }
@@ -140,7 +140,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) {
         }
         let actual = lista_abierta[indice_actual];
 
-        if(actual.x === fin_x && actual.y === fin_y){
+        if (actual.x === fin_x && actual.y === fin_y) {
             reconstruir_camino_final(actual);
             return;
         }
@@ -150,23 +150,23 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) {
 
         let movimientos = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
-        for(let m = 0; m < movimientos.length; m++){
+        for (let m = 0; m < movimientos.length; m++) {
             let nuevo_x = actual.x + movimientos[m][0];
             let nuevo_y = actual.y + movimientos[m][1];
 
-            if(nuevo_x >= 0 && nuevo_x < tablero[0].length & nuevo_y >= 0 && nuevo_y < tablero.length){
+            if (nuevo_x >= 0 && nuevo_x < tablero[0].length & nuevo_y >= 0 && nuevo_y < tablero.length) {
                 let tipo_terreno = tablero[nuevo_y][nuevo_x];
 
-                if(tipo_terreno === TERRENO.EDIFICIO || tipo_terreno === TERRENO.BLOQUEO) continue;
+                if (tipo_terreno === TERRENO.EDIFICIO || tipo_terreno === TERRENO.BLOQUEO) continue;
 
-                if(lista_cerrada.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y)) continue;
+                if (lista_cerrada.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y)) continue;
 
-                let costo_paso = (tipo_terreno === TERRENO.AGUA) ? 5 : 1;
+                let costo_paso = (tipo_terreno === TERRENO.AGUA) ? 5 : 1; //Costo de movimiento
                 let g_tentativo = actual.g + costo_paso;
 
                 let vecino = lista_abierta.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y);
 
-                if(!vecino || g_tentativo < vecino.g){
+                if (!vecino || g_tentativo < vecino.g) {
                     let nuevo_nodo = {
                         x: nuevo_x,
                         y: nuevo_y,
@@ -176,9 +176,9 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) {
                     };
                     nuevo_nodo.f = nuevo_nodo.g + nuevo_nodo.h;
 
-                    if(!vecino){
+                    if (!vecino) {
                         lista_abierta.push(nuevo_nodo);
-                    }else{
+                    } else {
                         vecino.g = nuevo_nodo.g;
                         vecino.f = nuevo_nodo.f;
                         vecino.padre = actual;
@@ -190,17 +190,17 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) {
     return null;
 }
 
-function reconstruir_camino_final(nodo_final){
+function reconstruir_camino_final(nodo_final) {
     let temporal = nodo_final;
     let pasos = 0;
 
-    while(temporal.padre !== null){
-        if(tablero[temporal.y][temporal.x] !== TERRENO.FIN &&
-            tablero[temporal.y][temporal.x] !== TERRENO.INICIO){ 
+    while (temporal.padre !== null) {
+        if (tablero[temporal.y][temporal.x] !== TERRENO.FIN &&
+            tablero[temporal.y][temporal.x] !== TERRENO.INICIO) {
             tablero[temporal.y][temporal.x] = TERRENO.CAMINO;
         }
         temporal = temporal.padre;
-        pasos++;        
+        pasos++;
     }
     document.getElementById('distancia').innerText = pasos + " pasos";
 }
