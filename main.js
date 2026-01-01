@@ -23,6 +23,11 @@ function crear_tablero() {
     const numFila = parseInt(document.getElementById('fila').value);
     const numColumna = parseInt(document.getElementById('columna').value);
 
+    if (numFila < 5 || numColumna < 5) {
+        alert("El tamaño debe ser mayor que 5.");
+        return 1;
+    }
+
     tablero = [];
     for (let y = 0; y < numFila; y++) {
         let fila_actual = [];
