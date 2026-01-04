@@ -25,5 +25,6 @@ El programa llama al algoritmo para calcular el camino optimo y luego utiliza un
 
 Aprendi javascript principalmente y un poco a html con css.
 Aprendi a como conectar html y javascript
+Aprendi el algorimo A*, como funciona y como implementar.
 A como capturar los datos ingresados en html y pasar a javascript.
 A separar complejidad en funciones para mejor claridad.
