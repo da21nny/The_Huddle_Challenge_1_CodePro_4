@@ -15,9 +15,11 @@ function main() {
     //Botones para generar tablero y enviar coordenadas de inicio y fin.
     const btnGenerar = document.getElementById('btnGenerar');
     const btnEnviar = document.getElementById('btnEnviar');
+    const mapaContenedor = document.getElementById('mapaVisual');
 
     btnGenerar.addEventListener('click', crear_tablero);
     btnEnviar.addEventListener('click', coordenadas_inicio_fin);
+    mapaContenedor.addEventListener('click', gestionar_click_tablero);
 }
 
 function crear_tablero() {
@@ -26,7 +28,7 @@ function crear_tablero() {
 
     if (numFila < 5 || numColumna < 5) {
         alert("El tamaño debe ser mayor que 5.");
-        return 1;
+        return;
     }
 
     tablero = [];
@@ -51,15 +53,7 @@ function crear_tablero() {
         tablero[fin_y][fin_x] = TERRENO.FIN;
     }
     generar_obstaculos(numFila, numColumna);
-    document.getElementById('distancia').innerText = "0 pasos";
-    const pasos = buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y);
-
-    if (!pasos) {
-        document.getElementById('distancia').innerText = "No existe camino disponible.";
-    } else {
-        document.getElementById('distancia').innerText = pasos + " pasos";
-    }
-    mostrar_tablero(numFila, numColumna);
+    calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, numFila, numColumna);
 }
 
 function generar_obstaculos(fila, columna) {
@@ -93,17 +87,17 @@ function coordenadas_inicio_fin() {
 
     if (isNaN(inicio_x) || isNaN(inicio_y) || isNaN(fin_x) || isNaN(fin_y)) {
         alert('Por favor, ingrese coordenadas validas.');
-        return 1;
+        return;
     }
 
     if (inicio_x < 0 || inicio_x >= columna || inicio_y < 0 || inicio_y >= fila) {
         alert('Coordenadas de inicio invalidas');
-        return 1;
+        return;
     }
 
     if (fin_x < 0 || fin_x >= columna || fin_y < 0 || fin_y >= fila) {
         alert('Coordenadas de fin invalidas');
-        return 1;
+        return;
     }
 
     for (let y = 0; y < fila; y++) {
@@ -123,12 +117,16 @@ function coordenadas_inicio_fin() {
         tablero[inicio_y][inicio_x] === TERRENO.AGUA || tablero[fin_y][fin_x] === TERRENO.AGUA ||
         tablero[inicio_y][inicio_x] === TERRENO.EDIFICIO || tablero[fin_y][fin_x] === TERRENO.EDIFICIO) {
         alert('Coordenadas de inicio o fin sobre terreno no valido');
-        return 1;
+        return;
     }
 
     tablero[inicio_y][inicio_x] = TERRENO.INICIO;
     tablero[fin_y][fin_x] = TERRENO.FIN;
 
+    calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, fila, columna);
+}
+
+function calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, fila, columna) {
     document.getElementById('distancia').innerText = "0 pasos";
     const pasos = buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y);
 
@@ -164,6 +162,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) {
 
     while (lista_abierta.length > 0) {
         let indice_actual = 0;
+
         for (let i = 0; i < lista_abierta.length; i++) {
             if (lista_abierta[i].f < lista_abierta[indice_actual].f) {
                 indice_actual = i;
@@ -240,13 +239,36 @@ function reconstruir_camino_final(nodo_final) {
     return pasos;
 }
 
+function gestionar_click_tablero(evento) {
+    if (!tablero || !evento.target.classList.contains('cell')) {
+        return;
+    }
+
+    const fila = parseInt(evento.target.dataset.fila);
+    const columna = parseInt(evento.target.dataset.columna);
+    const valor_actual = tablero[fila][columna];
+
+    if (valor_actual === TERRENO.INICIO || valor_actual === TERRENO.FIN) {
+        return;
+    }
+
+    if (valor_actual === TERRENO.LIBRE || valor_actual === TERRENO.CAMINO || valor_actual === TERRENO.CAMINO_AGUA) {
+        const tipo_terreno = Math.floor(Math.random() * 3) + 1;
+        tablero[fila][columna] = tipo_terreno;
+    } else {
+        tablero[fila][columna] = TERRENO.LIBRE;
+    }
+    mostrar_tablero(tablero.length, tablero[0].length);
+}
+
 function mostrar_tablero(fila, columna) {
     const contenedorID = document.getElementById('mapaVisual');
+    const TAMANHO = 35;
 
     contenedorID.innerHTML = '';
     contenedorID.style.display = 'grid';
-    contenedorID.style.gridTemplateColumns = `repeat(${columna}, 35px)`;
-    contenedorID.style.gridTemplateRows = `repeat(${fila}, 35px)`;
+    contenedorID.style.gridTemplateColumns = `repeat(${columna}, ${TAMANHO}px)`;
+    contenedorID.style.gridTemplateRows = `repeat(${fila}, ${TAMANHO}px)`;
 
     for (let y = 0; y < fila; y++) {
         for (let x = 0; x < columna; x++) {
@@ -254,6 +276,7 @@ function mostrar_tablero(fila, columna) {
             celdaDiv.classList.add('cell'); // Añadir clase común a todas las celdas
             celdaDiv.dataset.fila = y; // Almacenar fila en dataset
             celdaDiv.dataset.columna = x; // Almacenar columna en dataset
+            celdaDiv.style.cursor = 'pointer'; // Cambiar cursor a puntero
 
             const valor = tablero[y][x]; // Obtener el valor del terreno en la celda
 
