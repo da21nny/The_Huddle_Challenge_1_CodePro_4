@@ -165,20 +165,14 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) { //Función que 
     lista_abierta.push(inicio); // Añadir nodo de inicio a la lista abierta
 
     while (lista_abierta.length > 0) { // Mientras haya nodos por explorar
-        let indice_actual = 0; // Índice del nodo con el menor f
-
-        for (let i = 0; i < lista_abierta.length; i++) { // Buscar nodo con el menor f
-            if (lista_abierta[i].f < lista_abierta[indice_actual].f) { // Comparar f
-                indice_actual = i; // Actualizar índice
-            }
-        }
-        let actual = lista_abierta[indice_actual]; // Nodo actual a explorar
+        lista_abierta.sort((a, b) => a.f - b.f); // Ordenar lista abierta por f ascendente
+        let actual = lista_abierta[0]; // Nodo con el menor f
 
         if (actual.x === fin_x && actual.y === fin_y) { // Si se ha llegado al nodo final
             return reconstruir_camino_final(actual); // Reconstruir y retornar el camino final
         }
 
-        lista_abierta.splice(indice_actual, 1); // Remover nodo actual de la lista abierta
+        lista_abierta.splice(0, 1); // Remover nodo actual de la lista abierta
         lista_cerrada.push(actual); // Añadir nodo actual a la lista cerrada
 
         let movimientos = [[0, 1], [0, -1], [1, 0], [-1, 0]]; // Movimientos posibles (arriba, abajo, derecha, izquierda)
@@ -194,7 +188,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) { //Función que 
 
                 if (lista_cerrada.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y)) continue; // Saltar si ya está en la lista cerrada
 
-                let costo_paso = (tipo_terreno === TERRENO.AGUA) ? 5 : 1; //Costo de movimiento según el tipo de terreno
+                let costo_paso = (tipo_terreno === TERRENO.AGUA) ? 5 : 1; // Costo del paso (5 para agua, 1 para libre)
                 let g_tentativo = actual.g + costo_paso; // Calcular g tentativo
 
                 let vecino = lista_abierta.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y); // Buscar vecino en la lista abierta
