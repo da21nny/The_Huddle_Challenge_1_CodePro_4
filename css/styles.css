@@ -32,7 +32,8 @@ body { font-family: sans-serif; padding: 20px;}
 .entrada { background: #2ecc71; color: white; }
 .salida { background: orange; color: white; }
 .camino { background: greenyellow; color: white; }
-        
+.camino_agua { background: #90EE90; color: white; }
+
 .center { text-align: center; }
 
 .texto { text-align: center; font-size: 20px; font-family: Verdana, Geneva, Tahoma, sans-serif;}
