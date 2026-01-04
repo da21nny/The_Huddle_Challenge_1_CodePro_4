@@ -227,7 +227,7 @@ function reconstruir_camino_final(nodo_final) { //Función para reconstruir el c
             tablero[temporal.y][temporal.x] !== TERRENO.INICIO) { // No sobrescribir puntos de inicio o fin
 
             if (tablero[temporal.y][temporal.x] === TERRENO.AGUA) { // Marcar camino sobre agua
-                tablero[temporal.y][temporal.x] = TERRENO.CAMINO_AGUA; 
+                tablero[temporal.y][temporal.x] = TERRENO.CAMINO_AGUA;
             } else { // Marcar camino sobre terreno libre
                 tablero[temporal.y][temporal.x] = TERRENO.CAMINO;
             }
@@ -251,13 +251,13 @@ function gestionar_click_tablero(evento) { //Función para gestionar los clicks 
         return;
     }
 
-    if (punto_inicio && punto_fin) { 
+    if (punto_inicio && punto_fin) {
         limpiar_camino_viejo(); // Limpiar caminos anteriores antes de modificar el terreno
     }
 
     if (valor_actual === TERRENO.LIBRE || valor_actual === TERRENO.CAMINO || valor_actual === TERRENO.CAMINO_AGUA) { // Cambiar terreno libre a un tipo de obstáculo aleatorio
         const tipo_terreno = Math.floor(Math.random() * 3) + 1; // Tipo de terreno aleatorio (1: Edificio, 2: Agua, 3: Bloqueo)
-        tablero[fila][columna] = tipo_terreno; 
+        tablero[fila][columna] = tipo_terreno;
     } else {
         tablero[fila][columna] = TERRENO.LIBRE; // Cambiar obstáculo a terreno libre
     }
@@ -265,10 +265,13 @@ function gestionar_click_tablero(evento) { //Función para gestionar los clicks 
 }
 
 function limpiar_camino_viejo() { //Función para limpiar caminos viejos del tablero antes de recalcular
-    for (let y = 0; y < tablero.length; y++) { 
+    for (let y = 0; y < tablero.length; y++) {
         for (let x = 0; x < tablero[y].length; x++) {
-            if (tablero[y][x] === TERRENO.CAMINO || tablero[y][x] === TERRENO.CAMINO_AGUA) { 
-                tablero[y][x] = TERRENO.LIBRE; // Limpiar camino viejo
+            if (tablero[y][x] === TERRENO.CAMINO) {
+                tablero[y][x] = TERRENO.LIBRE; // Si es camino normal, lo vuelve libre
+            }
+            if (tablero[y][x] === TERRENO.CAMINO_AGUA) {
+                tablero[y][x] = TERRENO.AGUA; // Si es camino sobre agua, lo vuelve agua
             }
         }
     }
