@@ -10,6 +10,8 @@ const TERRENO = {
 }
 
 let tablero = [];
+let punto_inicio = null;
+let punto_fin = null;
 
 function main() {
     //Botones para generar tablero y enviar coordenadas de inicio y fin.
@@ -39,21 +41,20 @@ function crear_tablero() {
         }
         tablero.push(fila_actual);
     }
-
-    const inicio_x = parseInt(document.getElementById('inicial_x').value) - 1;
-    const inicio_y = parseInt(document.getElementById('inicial_y').value) - 1;
-    const fin_x = parseInt(document.getElementById('fin_x').value) - 1;
-    const fin_y = parseInt(document.getElementById('fin_y').value) - 1;
-
-    if (!isNaN(inicio_x) && !isNaN(inicio_y) && inicio_x >= 0 && inicio_x < numColumna && inicio_y >= 0 && inicio_y < numFila) {
-        tablero[inicio_y][inicio_x] = TERRENO.INICIO;
+    if (punto_inicio !== null && punto_inicio.x >= 0 && punto_inicio.x < numColumna && punto_inicio.y >= 0 && punto_inicio.y < numFila) {
+        tablero[punto_inicio.y][punto_inicio.x] = TERRENO.INICIO;
     }
 
-    if (!isNaN(fin_x) && !isNaN(fin_y) && fin_x >= 0 && fin_x < numColumna && fin_y >= 0 && fin_y < numFila) {
-        tablero[fin_y][fin_x] = TERRENO.FIN;
+    if (punto_fin !== null && punto_fin.x >= 0 && punto_fin.x < numColumna && punto_fin.y >= 0 && punto_fin.y < numFila) {
+        tablero[punto_fin.y][punto_fin.x] = TERRENO.FIN;
     }
+
     generar_obstaculos(numFila, numColumna);
-    calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, numFila, numColumna);
+    if (punto_inicio !== null && punto_fin !== null) {
+        calcular_pasos_mostrar_camino(punto_inicio.x, punto_inicio.y, punto_fin.x, punto_fin.y, numFila, numColumna);
+    } else {
+        mostrar_tablero(numFila, numColumna);
+    }
 }
 
 function generar_obstaculos(fila, columna) {
@@ -80,22 +81,20 @@ function coordenadas_inicio_fin() {
     const fila = tablero.length;
     const columna = tablero[0].length;
 
-    const inicio_x = parseInt(document.getElementById('inicial_x').value) - 1;
-    const inicio_y = parseInt(document.getElementById('inicial_y').value) - 1;
-    const fin_x = parseInt(document.getElementById('fin_x').value) - 1;
-    const fin_y = parseInt(document.getElementById('fin_y').value) - 1;
+    punto_inicio = { x: parseInt(document.getElementById('inicial_x').value) - 1, y: parseInt(document.getElementById('inicial_y').value) - 1 };
+    punto_fin = { x: parseInt(document.getElementById('fin_x').value) - 1, y: parseInt(document.getElementById('fin_y').value) - 1 };
 
-    if (isNaN(inicio_x) || isNaN(inicio_y) || isNaN(fin_x) || isNaN(fin_y)) {
+    if (isNaN(punto_inicio.x) || isNaN(punto_inicio.y) || isNaN(punto_fin.x) || isNaN(punto_fin.y)) {
         alert('Por favor, ingrese coordenadas validas.');
         return;
     }
 
-    if (inicio_x < 0 || inicio_x >= columna || inicio_y < 0 || inicio_y >= fila) {
+    if (punto_inicio.x < 0 || punto_inicio.x >= columna || punto_inicio.y < 0 || punto_inicio.y >= fila) {
         alert('Coordenadas de inicio invalidas');
         return;
     }
 
-    if (fin_x < 0 || fin_x >= columna || fin_y < 0 || fin_y >= fila) {
+    if (punto_fin.x < 0 || punto_fin.x >= columna || punto_fin.y < 0 || punto_fin.y >= fila) {
         alert('Coordenadas de fin invalidas');
         return;
     }
@@ -112,18 +111,18 @@ function coordenadas_inicio_fin() {
         }
     }
 
-    if (tablero[inicio_y][inicio_x] === TERRENO.INICIO || tablero[fin_y][fin_x] === TERRENO.FIN ||
-        tablero[inicio_y][inicio_x] === TERRENO.BLOQUEO || tablero[fin_y][fin_x] === TERRENO.BLOQUEO ||
-        tablero[inicio_y][inicio_x] === TERRENO.AGUA || tablero[fin_y][fin_x] === TERRENO.AGUA ||
-        tablero[inicio_y][inicio_x] === TERRENO.EDIFICIO || tablero[fin_y][fin_x] === TERRENO.EDIFICIO) {
+    if (tablero[punto_inicio.y][punto_inicio.x] === TERRENO.INICIO || tablero[punto_fin.y][punto_fin.x] === TERRENO.FIN ||
+        tablero[punto_inicio.y][punto_inicio.x] === TERRENO.BLOQUEO || tablero[punto_fin.y][punto_fin.x] === TERRENO.BLOQUEO ||
+        tablero[punto_inicio.y][punto_inicio.x] === TERRENO.AGUA || tablero[punto_fin.y][punto_fin.x] === TERRENO.AGUA ||
+        tablero[punto_inicio.y][punto_inicio.x] === TERRENO.EDIFICIO || tablero[punto_fin.y][punto_fin.x] === TERRENO.EDIFICIO) {
         alert('Coordenadas de inicio o fin sobre terreno no valido');
         return;
     }
 
-    tablero[inicio_y][inicio_x] = TERRENO.INICIO;
-    tablero[fin_y][fin_x] = TERRENO.FIN;
+    tablero[punto_inicio.y][punto_inicio.x] = TERRENO.INICIO;
+    tablero[punto_fin.y][punto_fin.x] = TERRENO.FIN;
 
-    calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, fila, columna);
+    calcular_pasos_mostrar_camino(punto_inicio.x, punto_inicio.y, punto_fin.x, punto_fin.y, fila, columna);
 }
 
 function calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, fila, columna) {
@@ -252,13 +251,27 @@ function gestionar_click_tablero(evento) {
         return;
     }
 
+    if (punto_inicio && punto_fin) {
+        limpiar_camino_viejo();
+    }
+
     if (valor_actual === TERRENO.LIBRE || valor_actual === TERRENO.CAMINO || valor_actual === TERRENO.CAMINO_AGUA) {
         const tipo_terreno = Math.floor(Math.random() * 3) + 1;
         tablero[fila][columna] = tipo_terreno;
     } else {
         tablero[fila][columna] = TERRENO.LIBRE;
     }
-    mostrar_tablero(tablero.length, tablero[0].length);
+    calcular_pasos_mostrar_camino(punto_inicio.x, punto_inicio.y, punto_fin.x, punto_fin.y, tablero.length, tablero[0].length);
+}
+
+function limpiar_camino_viejo() {
+    for (let y = 0; y < tablero.length; y++) {
+        for (let x = 0; x < tablero[y].length; x++) {
+            if (tablero[y][x] === TERRENO.CAMINO || tablero[y][x] === TERRENO.CAMINO_AGUA) {
+                tablero[y][x] = TERRENO.LIBRE;
+            }
+        }
+    }
 }
 
 function mostrar_tablero(fila, columna) {
