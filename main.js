@@ -9,19 +9,24 @@ const TERRENO = {
     CAMINO_AGUA: 8
 } // Definición de tipos de terreno
 
+const TAMANHO_CELDA = 35; // Tamaño de cada celda en píxeles
+const PORCENTAJE_OBSTACULO = 0.4; // Porcentaje de obstáculos en el tablero
+
 let tablero = []; // Matriz del tablero
 let punto_inicio = null; // Coordenadas de inicio
 let punto_fin = null; // Coordenadas de fin
 
-function main() { //Función principal que se ejecuta al cargar la página
+function inicializar() { //Función principal que se ejecuta al cargar la página
     //Botones para generar el tablero, enviar las coordenadas y gestionar clicks en el tablero.
     const btnGenerar = document.getElementById('btnGenerar');
     const btnEnviar = document.getElementById('btnEnviar');
     const mapaContenedor = document.getElementById('mapaVisual');
+    const btnLimpiar = document.getElementById('btnLimpiar');
 
     btnGenerar.addEventListener('click', crear_tablero); // Evento para generar el tablero
     btnEnviar.addEventListener('click', coordenadas_inicio_fin); // Evento para enviar las coordenadas
     mapaContenedor.addEventListener('click', gestionar_click_tablero); // Evento para gestionar clicks en el tablero
+    btnLimpiar.addEventListener('click', resetear); // Evento para limpiar el tablero
 }
 
 function crear_tablero() { //Función para crear el tablero con las dimensiones especificadas
@@ -58,7 +63,7 @@ function crear_tablero() { //Función para crear el tablero con las dimensiones 
 }
 
 function generar_obstaculos(fila, columna) { //Función para generar obstáculos aleatorios en el tablero
-    const numObstaculos = Math.floor((fila * columna) * 0.4); // 40% de las celdas serán obstáculos
+    const numObstaculos = Math.floor((fila * columna) * PORCENTAJE_OBSTACULO); // 40% de las celdas serán obstáculos
     for (let i = 0; i < numObstaculos; i++) { // Generar cada obstáculo
         const valor_fila = Math.floor(Math.random() * fila); // Fila aleatoria
         const valor_columna = Math.floor(Math.random() * columna); // Columna aleatoria
@@ -279,60 +284,76 @@ function limpiar_camino_viejo() { //Función para limpiar caminos viejos del tab
 
 function mostrar_tablero(fila, columna) { //Función para mostrar el tablero en la interfaz de usuario
     const contenedorID = document.getElementById('mapaVisual'); // Contenedor del tablero
-    const TAMANHO = 35; // Tamaño de cada celda en píxeles
 
-    contenedorID.innerHTML = ''; // Limpiar contenido previo del contenedor
     contenedorID.style.display = 'grid'; // Usar display grid para el contenedor
-    contenedorID.style.gridTemplateColumns = `repeat(${columna}, ${TAMANHO}px)`; // Definir columnas del grid
-    contenedorID.style.gridTemplateRows = `repeat(${fila}, ${TAMANHO}px)`; // Definir filas del grid
+    contenedorID.style.gridTemplateColumns = `repeat(${columna}, ${TAMANHO_CELDA}px)`; // Definir columnas del grid
+    contenedorID.style.gridTemplateRows = `repeat(${fila}, ${TAMANHO_CELDA}px)`; // Definir filas del grid
 
-    for (let y = 0; y < fila; y++) { // Recorrer filas
-        for (let x = 0; x < columna; x++) { // Recorrer columnas
-            const celdaDiv = document.createElement('div'); // Crear div para cada celda
-            celdaDiv.classList.add('cell'); // Añadir clase común a todas las celdas
-            celdaDiv.dataset.fila = y; // Almacenar fila en dataset
-            celdaDiv.dataset.columna = x; // Almacenar columna en dataset
-            celdaDiv.style.cursor = 'pointer'; // Cambiar cursor a puntero
+    const celdas_existentes = contenedorID.querySelectorAll('.cell'); // Seleccionar todas las celdas existentes
 
-            const valor = tablero[y][x]; // Obtener el valor del terreno en la celda
-
-            switch (valor) { // Asignar clase y contenido según el tipo de terreno
-                case TERRENO.EDIFICIO: // Edificio
-                    celdaDiv.textContent = 'X';
-                    celdaDiv.classList.add('edificio');
-                    break;
-                case TERRENO.AGUA: // Agua
-                    celdaDiv.textContent = 'a';
-                    celdaDiv.classList.add('agua');
-                    break
-                case TERRENO.BLOQUEO: // Bloqueo
-                    celdaDiv.textContent = 'B';
-                    celdaDiv.classList.add('bloqueo');
-                    break;
-                case TERRENO.INICIO: // Inicio
-                    celdaDiv.textContent = 'E';
-                    celdaDiv.classList.add('entrada');
-                    break;
-                case TERRENO.FIN: // Fin
-                    celdaDiv.textContent = 'S';
-                    celdaDiv.classList.add('salida');
-                    break;
-                case TERRENO.CAMINO: // Camino
-                    celdaDiv.textContent = '*';
-                    celdaDiv.classList.add('camino');
-                    break;
-                case TERRENO.CAMINO_AGUA: // Camino sobre agua
-                    celdaDiv.textContent = 'A';
-                    celdaDiv.classList.add('camino_agua');
-                    break;
-                default: // Terreno libre
-                    celdaDiv.textContent = '.';
-                    celdaDiv.classList.add('libre');
-                    break;
+    if(celdas_existentes.length === (fila * columna)){ // Si ya existen las celdas, solo actualizar su contenido
+        let i = 0;
+        for (let y = 0; y < fila; y++) { // Recorrer filas
+            for (let x = 0; x < columna; x++) { // Recorrer columnas
+                const celdaDiv = celdas_existentes[i]; // Obtener la celda existente
+                const valor_terreno = tablero[y][x]; // Obtener el valor del terreno en la celda
+                
+                const info = obtener_info_visual(valor_terreno); // Obtener información visual del terreno
+                celdaDiv.className = `cell ${info.clase}`; // Actualizar clase de la celda
+                celdaDiv.textContent = info.texto; // Actualizar texto de la celda
+                i++; // Incrementar índice
             }
-            contenedorID.appendChild(celdaDiv); // Añadir celda al contenedor
+        }
+    } else{ // Si no existen las celdas, crearlas desde cero
+        contenedorID.innerHTML = ''; // Limpiar el contenedor antes de mostrar el tablero
+
+        for (let y = 0; y < fila; y++) { // Recorrer filas
+            for (let x = 0; x < columna; x++) { // Recorrer columnas
+                const celdaDiv = document.createElement('div'); // Crear div para la celda
+                const valor_terreno = tablero[y][x]; // Obtener el valor del terreno en la celda
+                const info = obtener_info_visual(valor_terreno); // Obtener información visual del terreno
+
+                celdaDiv.classList.add('cell'); // Añadir clase base 'cell'
+                celdaDiv.classList.add(info.clase); // Añadir clase específica del terreno
+                celdaDiv.textContent = info.texto; // Establecer texto de la celda
+
+                celdaDiv.dataset.fila = y; // Almacenar fila en el dataset
+                celdaDiv.dataset.columna = x; // Almacenar columna en el dataset
+
+                contenedorID.appendChild(celdaDiv); // Añadir celda al contenedor
+            }
         }
     }
 }
 
-document.addEventListener('DOMContentLoaded', main); // Ejecutar función principal al cargar el contenido del DOM
+function obtener_info_visual(tipo_terreno) { //Función para obtener la representación visual de un tipo de terreno
+    switch (tipo_terreno) {
+        case TERRENO.EDIFICIO:
+            return { texto: 'X', clase: 'edificio' };
+        case TERRENO.AGUA:
+            return { texto: 'a', clase: 'agua' };
+        case TERRENO.BLOQUEO:
+            return { texto: 'B', clase: 'bloqueo' };
+        case TERRENO.INICIO:
+            return { texto: 'E', clase: 'entrada' };
+        case TERRENO.FIN:
+            return { texto: 'S', clase: 'salida' };
+        case TERRENO.CAMINO:
+            return { texto: '*', clase: 'camino' };
+        case TERRENO.CAMINO_AGUA:
+            return { texto: 'A', clase: 'camino_agua' };
+        default:
+            return { texto: '.', clase: 'libre' };
+    }
+}
+
+function resetear() { //Función para resetear el tablero y las coordenadas
+    tablero = []; // Reiniciar el tablero
+    punto_inicio = null;    // Reiniciar punto de inicio
+    punto_fin = null;
+    document.getElementById('mapaVisual').innerHTML = ''; // Limpiar el contenedor del tablero
+    document.getElementById('mapaVisual').style.display = 'none'; // Ocultar el contenedor del tablero
+    document.getElementById('distancia').innerText = "0 pasos"; // Reiniciar el contador de pasos
+}   // Reiniciar punto de fin
+
+document.addEventListener('DOMContentLoaded', inicializar); // Ejecutar función principal al cargar el contenido del DOM
