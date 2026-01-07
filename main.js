@@ -10,7 +10,7 @@ const TERRENO = {
 } // Definición de tipos de terreno
 
 const TAMANHO_CELDA = 35; // Tamaño de cada celda en píxeles
-const PORCENTAJE_OBSTACULO = 0.4; // Porcentaje de obstáculos en el tablero
+const PORCENTAJE_OBSTACULO = 0.5; // Porcentaje de obstáculos en el tablero
 
 let tablero = []; // Matriz del tablero
 let punto_inicio = null; // Coordenadas de inicio
@@ -26,7 +26,7 @@ function inicializar() { //Función principal que se ejecuta al cargar la págin
     btnGenerar.addEventListener('click', crear_tablero); // Evento para generar el tablero
     btnEnviar.addEventListener('click', coordenadas_inicio_fin); // Evento para enviar las coordenadas
     mapaContenedor.addEventListener('click', gestionar_click_tablero); // Evento para gestionar clicks en el tablero
-    btnLimpiar.addEventListener('click', resetear); // Evento para limpiar el tablero
+    btnLimpiar.addEventListener('click', limpiar_tablero); // Evento para limpiar el tablero
 }
 
 function crear_tablero() { //Función para crear el tablero con las dimensiones especificadas
@@ -341,7 +341,7 @@ function obtener_info_visual(tipo_terreno) { //Función para obtener la represen
     }
 }
 
-function resetear() { //Función para resetear el tablero y las coordenadas
+function limpiar_tablero() { //Función para limpiar el tablero y las coordenadas
     tablero = []; // Reiniciar el tablero
     punto_inicio = null;    // Reiniciar punto de inicio
     punto_fin = null;
