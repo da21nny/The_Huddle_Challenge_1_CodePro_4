@@ -152,12 +152,12 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) { //Función que 
     let lista_cerrada = []; // Nodos ya explorados
 
     let inicio = {
-        x: inicio_x,
-        y: inicio_y,
-        g: 0,
-        h: calcular_distancia(inicio_x, inicio_y, fin_x, fin_y),
-        f: 0,
-        padre: null
+        x: inicio_x, // Coordenada x del nodo de inicio
+        y: inicio_y, // Coordenada y del nodo de inicio
+        g: 0, // Costo desde el inicio hasta el nodo actual
+        h: calcular_distancia(inicio_x, inicio_y, fin_x, fin_y), // Heurística (distancia estimada al nodo final)
+        f: 0, // Costo total (g + h)
+        padre: null // Nodo padre (ninguno para el inicio)
     }; // Nodo de inicio
 
     inicio.f = inicio.g + inicio.h; // Calcular f del nodo de inicio
