@@ -149,7 +149,8 @@ function distancia_heuristica(valor_x1, valor_y1, valor_x2, valor_y2) { //Funci�
 
 function buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y) { //Función que implementa el algoritmo A* para encontrar la ruta más corta
     let lista_abierta = []; // Nodos por explorar
-    let lista_cerrada = []; // Nodos ya explorados
+    let mapa_abierto = new Map(); // Mapa para nodos en la lista abierta
+    let lista_cerrada = new Set(); // Nodos ya explorados
 
     let inicio = {
         x: inicio_x, // Coordenada x del nodo de inicio
@@ -163,6 +164,7 @@ function buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y) { //Función que i
     inicio.f = inicio.g + inicio.h; // Calcular f del nodo de inicio
 
     lista_abierta.push(inicio); // Añadir nodo de inicio a la lista abierta
+    mapa_abierto.set(`${inicio.x},${inicio.y}`, inicio); // Añadir nodo de inicio al mapa abierto
 
     while (lista_abierta.length > 0) { // Mientras haya nodos por explorar
         lista_abierta.sort((a, b) => a.f - b.f); // Ordenar lista abierta por f ascendente
@@ -173,7 +175,8 @@ function buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y) { //Función que i
         }
 
         lista_abierta.splice(0, 1); // Remover nodo actual de la lista abierta
-        lista_cerrada.push(actual); // Añadir nodo actual a la lista cerrada
+        mapa_abierto.delete(`${actual.x},${actual.y}`); // Remover nodo actual del mapa abierto
+        lista_cerrada.add(`${actual.x},${actual.y}`); // Añadir nodo actual a la lista cerrada
 
         let movimientos = [[0, 1], [0, -1], [1, 0], [-1, 0]]; // Movimientos posibles (arriba, abajo, derecha, izquierda)
 
@@ -183,15 +186,16 @@ function buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y) { //Función que i
 
             if (nuevo_x >= 0 && nuevo_x < tablero[0].length && nuevo_y >= 0 && nuevo_y < tablero.length) { // Validar dentro de los límites del tablero
                 let tipo_terreno = tablero[nuevo_y][nuevo_x]; // Tipo de terreno en la nueva posición
+                let clave = `${nuevo_x},${nuevo_y}`; // Clave para mapas y sets
 
                 if (tipo_terreno === TERRENO.EDIFICIO || tipo_terreno === TERRENO.BLOQUEO) continue; // Saltar terrenos no transitables
 
-                if (lista_cerrada.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y)) continue; // Saltar si ya está en la lista cerrada
+                if (lista_cerrada.has(clave)) continue; // Saltar si ya está en la lista cerrada
 
                 let costo_paso = (tipo_terreno === TERRENO.AGUA) ? 5 : 1; // Costo del paso (5 para agua, 1 para libre)
                 let g_tentativo = actual.g + costo_paso; // Calcular g tentativo
 
-                let vecino = lista_abierta.find(nodo => nodo.x === nuevo_x && nodo.y === nuevo_y); // Buscar vecino en la lista abierta
+                let vecino = mapa_abierto.get(clave); // Buscar vecino en el mapa abierto
 
                 if (!vecino || g_tentativo < vecino.g) { // Si no está en la lista abierta o se encontró un mejor camino
                     let nuevo_nodo = {
@@ -205,6 +209,7 @@ function buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y) { //Función que i
 
                     if (!vecino) { // Si el vecino no está en la lista abierta
                         lista_abierta.push(nuevo_nodo); // Añadir nuevo nodo a la lista abierta
+                        mapa_abierto.set(clave, nuevo_nodo); // Añadir nuevo nodo al mapa abierto
                     } else { // Actualizar vecino existente con mejor camino
                         vecino.g = nuevo_nodo.g; // Actualizar g
                         vecino.f = nuevo_nodo.f; // Actualizar f
