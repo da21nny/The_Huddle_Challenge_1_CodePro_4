@@ -10,7 +10,7 @@ const TERRENO = {
 } // Definición de tipos de terreno
 
 const TAMANHO_CELDA = 35; // Tamaño de cada celda en píxeles
-const PORCENTAJE_OBSTACULO = 0.4; // Porcentaje de obstáculos en el tablero
+const PORCENTAJE_OBSTACULO = 0.5; // Porcentaje de obstáculos en el tablero
 
 let tablero = []; // Matriz del tablero
 let punto_inicio = null; // Coordenadas de inicio
@@ -26,7 +26,7 @@ function inicializar() { //Función principal que se ejecuta al cargar la págin
     btnGenerar.addEventListener('click', crear_tablero); // Evento para generar el tablero
     btnEnviar.addEventListener('click', coordenadas_inicio_fin); // Evento para enviar las coordenadas
     mapaContenedor.addEventListener('click', gestionar_click_tablero); // Evento para gestionar clicks en el tablero
-    btnLimpiar.addEventListener('click', resetear); // Evento para limpiar el tablero
+    btnLimpiar.addEventListener('click', limpiar_tablero); // Evento para limpiar el tablero
 }
 
 function crear_tablero() { //Función para crear el tablero con las dimensiones especificadas
@@ -132,7 +132,7 @@ function coordenadas_inicio_fin() { //Función para obtener y validar las coorde
 
 function calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, fila, columna) { //Función para calcular pasos y mostrar el camino en el tablero
     document.getElementById('distancia').innerText = "0 pasos";
-    const pasos = buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y); // Buscar ruta usando A*
+    const pasos = buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y); // Buscar ruta usando A*
 
     if (!pasos) { // Si no hay ruta disponible
         document.getElementById('distancia').innerText = "No existe camino disponible.";
@@ -143,21 +143,21 @@ function calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, fila, c
     mostrar_tablero(fila, columna); // Mostrar el tablero actualizado
 }
 
-function calcular_distancia(valor_x1, valor_y1, valor_x2, valor_y2) { //Función para calcular la distancia Manhattan entre dos puntos
+function distancia_heuristica(valor_x1, valor_y1, valor_x2, valor_y2) { //Función para calcular la distancia Manhattan entre dos puntos
     return Math.abs(valor_x1 - valor_x2) + Math.abs(valor_y1 - valor_y2); // Distancia Manhattan
 }
 
-function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) { //Función que implementa el algoritmo A* para encontrar la ruta más corta
+function buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y) { //Función que implementa el algoritmo A* para encontrar la ruta más corta
     let lista_abierta = []; // Nodos por explorar
     let lista_cerrada = []; // Nodos ya explorados
 
     let inicio = {
-        x: inicio_x,
-        y: inicio_y,
-        g: 0,
-        h: calcular_distancia(inicio_x, inicio_y, fin_x, fin_y),
-        f: 0,
-        padre: null
+        x: inicio_x, // Coordenada x del nodo de inicio
+        y: inicio_y, // Coordenada y del nodo de inicio
+        g: 0, // Costo desde el inicio hasta el nodo actual
+        h: distancia_heuristica(inicio_x, inicio_y, fin_x, fin_y), // Heurística (distancia estimada al nodo final)
+        f: 0, // Costo total (g + h)
+        padre: null // Nodo padre (ninguno para el inicio)
     }; // Nodo de inicio
 
     inicio.f = inicio.g + inicio.h; // Calcular f del nodo de inicio
@@ -198,7 +198,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) { //Función que 
                         x: nuevo_x,
                         y: nuevo_y,
                         g: g_tentativo,
-                        h: calcular_distancia(nuevo_x, nuevo_y, fin_x, fin_y),
+                        h: distancia_heuristica(nuevo_x, nuevo_y, fin_x, fin_y),
                         padre: actual
                     }; // Crear nuevo nodo
                     nuevo_nodo.f = nuevo_nodo.g + nuevo_nodo.h; // Calcular f del nuevo nodo
@@ -260,7 +260,12 @@ function gestionar_click_tablero(evento) { //Función para gestionar los clicks 
     } else {
         tablero[fila][columna] = TERRENO.LIBRE; // Cambiar obstáculo a terreno libre
     }
-    calcular_pasos_mostrar_camino(punto_inicio.x, punto_inicio.y, punto_fin.x, punto_fin.y, tablero.length, tablero[0].length); // Recalcular y mostrar camino después de la modificación
+
+    if(punto_inicio !== null && punto_fin !== null){ // Recalcular camino si existen puntos de inicio y fin
+        calcular_pasos_mostrar_camino(punto_inicio.x, punto_inicio.y, punto_fin.x, punto_fin.y, tablero.length, tablero[0].length); // Recalcular y mostrar camino después de la modificación
+    } else{ // Mostrar el tablero actualizado sin camino
+        mostrar_tablero(tablero.length, tablero[0].length); // Mostrar el tablero actualizado sin camino
+    }    
 }
 
 function limpiar_camino_viejo() { //Función para limpiar caminos viejos del tablero antes de recalcular
@@ -329,9 +334,9 @@ function obtener_info_visual(tipo_terreno) { //Función para obtener la represen
         case TERRENO.BLOQUEO:
             return { texto: 'B', clase: 'bloqueo' };
         case TERRENO.INICIO:
-            return { texto: 'E', clase: 'entrada' };
+            return { texto: 'I', clase: 'inicio' };
         case TERRENO.FIN:
-            return { texto: 'S', clase: 'salida' };
+            return { texto: 'F', clase: 'fin' };
         case TERRENO.CAMINO:
             return { texto: '*', clase: 'camino' };
         case TERRENO.CAMINO_AGUA:
@@ -341,13 +346,16 @@ function obtener_info_visual(tipo_terreno) { //Función para obtener la represen
     }
 }
 
-function resetear() { //Función para resetear el tablero y las coordenadas
-    tablero = []; // Reiniciar el tablero
+function limpiar_tablero() { //Función para limpiar el tablero y las coordenadas
+    /*tablero = []; // Reiniciar el tablero
     punto_inicio = null;    // Reiniciar punto de inicio
     punto_fin = null;
     document.getElementById('mapaVisual').innerHTML = ''; // Limpiar el contenedor del tablero
     document.getElementById('mapaVisual').style.display = 'none'; // Ocultar el contenedor del tablero
-    document.getElementById('distancia').innerText = "0 pasos"; // Reiniciar el contador de pasos
+    document.getElementById('distancia').innerText = "0 pasos"; // Reiniciar el contador de pasos */
+    location.reload(); // Recargar la página para limpiar todo
+    punto_inicio = null;   // Reiniciar punto de inicio
+    punto_fin = null;
 }   // Reiniciar punto de fin
 
 document.addEventListener('DOMContentLoaded', inicializar); // Ejecutar función principal al cargar el contenido del DOM
