@@ -132,7 +132,7 @@ function coordenadas_inicio_fin() { //Función para obtener y validar las coorde
 
 function calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, fila, columna) { //Función para calcular pasos y mostrar el camino en el tablero
     document.getElementById('distancia').innerText = "0 pasos";
-    const pasos = buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y); // Buscar ruta usando A*
+    const pasos = buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y); // Buscar ruta usando A*
 
     if (!pasos) { // Si no hay ruta disponible
         document.getElementById('distancia').innerText = "No existe camino disponible.";
@@ -143,11 +143,11 @@ function calcular_pasos_mostrar_camino(inicio_x, inicio_y, fin_x, fin_y, fila, c
     mostrar_tablero(fila, columna); // Mostrar el tablero actualizado
 }
 
-function calcular_distancia(valor_x1, valor_y1, valor_x2, valor_y2) { //Función para calcular la distancia Manhattan entre dos puntos
+function distancia_heuristica(valor_x1, valor_y1, valor_x2, valor_y2) { //Función para calcular la distancia Manhattan entre dos puntos
     return Math.abs(valor_x1 - valor_x2) + Math.abs(valor_y1 - valor_y2); // Distancia Manhattan
 }
 
-function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) { //Función que implementa el algoritmo A* para encontrar la ruta más corta
+function buscar_ruta_a_star(inicio_x, inicio_y, fin_x, fin_y) { //Función que implementa el algoritmo A* para encontrar la ruta más corta
     let lista_abierta = []; // Nodos por explorar
     let lista_cerrada = []; // Nodos ya explorados
 
@@ -155,7 +155,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) { //Función que 
         x: inicio_x, // Coordenada x del nodo de inicio
         y: inicio_y, // Coordenada y del nodo de inicio
         g: 0, // Costo desde el inicio hasta el nodo actual
-        h: calcular_distancia(inicio_x, inicio_y, fin_x, fin_y), // Heurística (distancia estimada al nodo final)
+        h: distancia_heuristica(inicio_x, inicio_y, fin_x, fin_y), // Heurística (distancia estimada al nodo final)
         f: 0, // Costo total (g + h)
         padre: null // Nodo padre (ninguno para el inicio)
     }; // Nodo de inicio
@@ -198,7 +198,7 @@ function buscar_ruta_a_start(inicio_x, inicio_y, fin_x, fin_y) { //Función que 
                         x: nuevo_x,
                         y: nuevo_y,
                         g: g_tentativo,
-                        h: calcular_distancia(nuevo_x, nuevo_y, fin_x, fin_y),
+                        h: distancia_heuristica(nuevo_x, nuevo_y, fin_x, fin_y),
                         padre: actual
                     }; // Crear nuevo nodo
                     nuevo_nodo.f = nuevo_nodo.g + nuevo_nodo.h; // Calcular f del nuevo nodo
@@ -329,9 +329,9 @@ function obtener_info_visual(tipo_terreno) { //Función para obtener la represen
         case TERRENO.BLOQUEO:
             return { texto: 'B', clase: 'bloqueo' };
         case TERRENO.INICIO:
-            return { texto: 'E', clase: 'entrada' };
+            return { texto: 'I', clase: 'inicio' };
         case TERRENO.FIN:
-            return { texto: 'S', clase: 'salida' };
+            return { texto: 'F', clase: 'fin' };
         case TERRENO.CAMINO:
             return { texto: '*', clase: 'camino' };
         case TERRENO.CAMINO_AGUA:

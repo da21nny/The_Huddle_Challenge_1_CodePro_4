@@ -29,13 +29,12 @@ body { font-family: sans-serif; padding: 20px;}
 .edificio { background: #333333; color: white; }
 .agua { background: #3498db; color: white; }
 .bloqueo { background: #e74c3c; color: white; }
-.entrada { background: #2ecc71; color: white; }
-.salida { background: orange; color: white; }
+.inicio { background: #2ecc71; color: white; }
+.fin { background: orange; color: white; }
 .camino { background: greenyellow; color: white; }
 .camino_agua { background: #90EE90; color: white; }
 
 .center { text-align: center; }
-
 .texto { text-align: center; font-size: 20px; font-family: Verdana, Geneva, Tahoma, sans-serif;}
 
 input[type="number"] {
