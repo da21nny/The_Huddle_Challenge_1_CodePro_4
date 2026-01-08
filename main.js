@@ -260,7 +260,12 @@ function gestionar_click_tablero(evento) { //Función para gestionar los clicks 
     } else {
         tablero[fila][columna] = TERRENO.LIBRE; // Cambiar obstáculo a terreno libre
     }
-    calcular_pasos_mostrar_camino(punto_inicio.x, punto_inicio.y, punto_fin.x, punto_fin.y, tablero.length, tablero[0].length); // Recalcular y mostrar camino después de la modificación
+
+    if(punto_inicio !== null && punto_fin !== null){ // Recalcular camino si existen puntos de inicio y fin
+        calcular_pasos_mostrar_camino(punto_inicio.x, punto_inicio.y, punto_fin.x, punto_fin.y, tablero.length, tablero[0].length); // Recalcular y mostrar camino después de la modificación
+    } else{ // Mostrar el tablero actualizado sin camino
+        mostrar_tablero(tablero.length, tablero[0].length); // Mostrar el tablero actualizado sin camino
+    }    
 }
 
 function limpiar_camino_viejo() { //Función para limpiar caminos viejos del tablero antes de recalcular
@@ -342,12 +347,15 @@ function obtener_info_visual(tipo_terreno) { //Función para obtener la represen
 }
 
 function limpiar_tablero() { //Función para limpiar el tablero y las coordenadas
-    tablero = []; // Reiniciar el tablero
+    /*tablero = []; // Reiniciar el tablero
     punto_inicio = null;    // Reiniciar punto de inicio
     punto_fin = null;
     document.getElementById('mapaVisual').innerHTML = ''; // Limpiar el contenedor del tablero
     document.getElementById('mapaVisual').style.display = 'none'; // Ocultar el contenedor del tablero
-    document.getElementById('distancia').innerText = "0 pasos"; // Reiniciar el contador de pasos
+    document.getElementById('distancia').innerText = "0 pasos"; // Reiniciar el contador de pasos */
+    location.reload(); // Recargar la página para limpiar todo
+    punto_inicio = null;   // Reiniciar punto de inicio
+    punto_fin = null;
 }   // Reiniciar punto de fin
 
 document.addEventListener('DOMContentLoaded', inicializar); // Ejecutar función principal al cargar el contenido del DOM
