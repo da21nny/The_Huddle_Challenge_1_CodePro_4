@@ -352,13 +352,12 @@ function obtener_info_visual(tipo_terreno) { //Función para obtener la represen
 }
 
 function limpiar_tablero() { //Función para limpiar el tablero y las coordenadas
-    /*tablero = []; // Reiniciar el tablero
+    tablero = []; // Reiniciar el tablero
     punto_inicio = null;    // Reiniciar punto de inicio
     punto_fin = null;
     document.getElementById('mapaVisual').innerHTML = ''; // Limpiar el contenedor del tablero
     document.getElementById('mapaVisual').style.display = 'none'; // Ocultar el contenedor del tablero
-    document.getElementById('distancia').innerText = "0 pasos"; // Reiniciar el contador de pasos */
-    location.reload(); // Recargar la página para limpiar todo
+    document.getElementById('distancia').innerText = "0 pasos"; // Reiniciar el contador de pasos
     punto_inicio = null;   // Reiniciar punto de inicio
     punto_fin = null;
 }   // Reiniciar punto de fin
