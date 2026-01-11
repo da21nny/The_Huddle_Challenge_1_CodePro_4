@@ -17,7 +17,8 @@ El programa permite interactuar con el tablero, clickeando una celda y cambiar l
 
 Utilice el algoritmo A* porque:
 
-Me permite encontrar el camino mas optimo, teniendo los puntos de origen y fin, utiliza una formula heuristica para priorizar caminos prometedores.
+Me permite encontrar el camino mas optimo teniendo los puntos de origen y fin, utiliza una formula heuristica para priorizar caminos prometedores.
+Me permmite asignar costo a un obstaculo (en este caso agua con un costo de 5) para que pueda atravesar en el caso que no encuentre un camino libre.
 Es mas inteligente, porque tiene brujula que me dice donde esta la salida y cada paso tiene un peso que va diciendo si esta en el camino correcto a la salida
 El programa llama al algoritmo para calcular el camino optimo y luego utiliza una tecnica llamada backtraking (recorre de fin a inicio) para recuperar el camino y marcar en el tablero con (*).
 
