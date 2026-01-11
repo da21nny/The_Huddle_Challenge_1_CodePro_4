@@ -355,11 +355,11 @@ function limpiar_tablero() { //Función para limpiar el tablero y las coordenada
     tablero = []; // Reiniciar el tablero
     punto_inicio = null;    // Reiniciar punto de inicio
     punto_fin = null;
-    document.getElementById('mapaVisual').innerHTML = ''; // Limpiar el contenedor del tablero
+    document.getElementById('mapaVisual').textContent = ''; // Limpiar el contenedor del tablero
     document.getElementById('mapaVisual').style.display = 'none'; // Ocultar el contenedor del tablero
     document.getElementById('distancia').innerText = "0 pasos"; // Reiniciar el contador de pasos
     punto_inicio = null;   // Reiniciar punto de inicio
-    punto_fin = null;
-}   // Reiniciar punto de fin
+    punto_fin = null; // Reiniciar punto de fin
+}   
 
 document.addEventListener('DOMContentLoaded', inicializar); // Ejecutar función principal al cargar el contenido del DOM
