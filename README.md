@@ -2,12 +2,12 @@
 Proyecto - “THE HUDDLE — Calculadora de Rutas para los Elegidos” - Challenge 1 - The Huddle
 🧠 Que hice?
 
-Desarrollé una calculadora de ruta sobre un Tablero 2D en un entorno Web. Utiliza Javascrip para la parte Logica del tablero y HTML para captura de datos y CSS para el diseño. El programa pide al usuario definir:
+Desarrollé una calculadora de ruta sobre un Tablero 2D en un entorno Web. Utiliza Javascript para la parte Logica del tablero y HTML para captura de datos y CSS para el diseño. El programa pide al usuario definir:
 
 - Dimension del Tablero (Fila y Columnas).
 - La coordenada de Inicio (inicio_x, inicio_y).
 - La coordenada de Fin (fin_x, fin_y).
-- Una vez definido la dimension, el mapa genera obstaculos estaticos (Edificio, Agua, Bloqueo) de forma aleatoria y la cantidad establedida dentro del programa. (El 40% de la dimension del mapa).
+- Una vez definido la dimension, el mapa genera obstaculos estaticos (Edificio, Agua, Bloqueo) de forma aleatoria y la cantidad establecida dentro del programa. (El 50% de la dimension del mapa).
 
 Luego se ingresa las coordenadas de inicio y fin y se integran al mapa para que con una funcion busca el camino mas optimo entre las coordenadas dentro del mapa, evitando los obstaculos y visualizando en tiempo real.
 
