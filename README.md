@@ -4,10 +4,10 @@ Proyecto - “THE HUDDLE — Calculadora de Rutas para los Elegidos” - Challen
 
 Desarrollé una calculadora de ruta sobre un Tablero 2D en un entorno Web. Utiliza Javascrip para la parte Logica del tablero y HTML para captura de datos y CSS para el diseño. El programa pide al usuario definir:
 
-Dimension del Tablero (Fila y Columnas).
-La coordenada de Inicio (inicio_x, inicio_y).
-La coordenada de Fin (fin_x, fin_y).
-Una vez definido la dimension, el mapa genera obstaculos estaticos (Edificio, Agua, Bloqueo) de forma aleatoria y la cantidad establedida dentro del programa. (El 40% de la dimension del mapa).
+- Dimension del Tablero (Fila y Columnas).
+- La coordenada de Inicio (inicio_x, inicio_y).
+- La coordenada de Fin (fin_x, fin_y).
+- Una vez definido la dimension, el mapa genera obstaculos estaticos (Edificio, Agua, Bloqueo) de forma aleatoria y la cantidad establedida dentro del programa. (El 40% de la dimension del mapa).
 
 Luego se ingresa las coordenadas de inicio y fin y se integran al mapa para que con una funcion busca el camino mas optimo entre las coordenadas dentro del mapa, evitando los obstaculos y visualizando en tiempo real.
 
@@ -16,15 +16,15 @@ El programa permite interactuar con el tablero, clickeando una celda y cambiar l
 🔍 Que algoritmo utilice?
 
 Utilice el algoritmo A* porque:
-
-Me permite encontrar el camino mas optimo, teniendo los puntos de origen y fin, utiliza una formula heuristica para priorizar caminos prometedores.
-Es mas inteligente, porque tiene brujula que me dice donde esta la salida y cada paso tiene un peso que va diciendo si esta en el camino correcto a la salida
-El programa llama al algoritmo para calcular el camino optimo y luego utiliza una tecnica llamada backtraking (recorre de fin a inicio) para recuperar el camino y marcar en el tablero con (*).
+- Me permite encontrar el camino mas optimo teniendo los puntos de origen y fin, utiliza una formula heuristica para priorizar caminos prometedores.
+- Me permmite asignar costo a un obstaculo (en este caso agua con un costo de 5) para que pueda atravesar en el caso que no encuentre un camino libre.
+- Es mas inteligente, porque tiene brujula que me dice donde esta la salida y cada paso tiene un peso que va diciendo si esta en el camino correcto a la salida
+- El programa llama al algoritmo para calcular el camino optimo y luego utiliza una tecnica llamada backtraking (recorre de fin a inicio) para recuperar el camino y marcar en el tablero con (*).
 
 📚 Que aprendi?
 
-Aprendi javascript principalmente y un poco a html con css.
-Aprendi a como conectar html y javascript
-Aprendi el algorimo A*, como funciona y como implementar.
-A como capturar los datos ingresados en html y pasar a javascript.
-A separar complejidad en funciones para mejor claridad.
+- Aprendi javascript principalmente y un poco a html con css.
+- Aprendi a como conectar html y javascript
+- Aprendi el algorimo A*, como funciona y como implementar.
+- A como capturar los datos ingresados en html y pasar a javascript.
+- A separar complejidad en funciones para mejor claridad.
